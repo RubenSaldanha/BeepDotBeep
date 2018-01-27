@@ -7,20 +7,36 @@ public class GameControllerScript : MonoBehaviour {
 
     public static GameControllerScript current;
     public int seed;
+
+    public Universe currentUniverse;
+
     public int levelIndex;
-    
+    public Level currentLevel
+    {
+        get { return currentUniverse.levels[levelIndex]; }
+    }
+
+    public int selectedPlanetIndex;
+    public Planet selectedPlanet
+    {
+        get { return currentLevel.planets[selectedPlanetIndex]; }
+    }
+
+    public GameObject HeaderPanel;
+    public HeaderPanelScript HeaderPanelScript;
     public GameObject LevelMapPanel;
+    public LevelMapPanelScript LevelMapPanelScript;
     public GameObject PlanetPanel;
     public GameObject ActivationPanel;
-
-    public Level currentLevel;
-
-    int selectedPlanet;
+    public ActivationPanelScript ActivationPanelScript;
 
     // Use this for initialization
 	void Start () {
         current = this;
 
+        ResDb.Load();
+
+        HeaderPanel = GameObject.Find("HeaderPanel");
         LevelMapPanel = GameObject.Find("LevelMapPanel");
         PlanetPanel = GameObject.Find("PlanetPanel");
         ActivationPanel = GameObject.Find("ActivationPanel");
@@ -28,193 +44,99 @@ public class GameControllerScript : MonoBehaviour {
         seed = 0;
         levelIndex = 0;
 
-        CreateCurrentLevel();
+        CreateCurrentUniverse();
+
+        CreateCurrentLevelUI();
 	}
     
-    public void CreateCurrentLevel()
+    public void CreateCurrentUniverse()
     {
-        int difficulty = levelIndex;
-
-        Level lvl = new Level();
-        lvl.index = levelIndex;
-        lvl.seed = levelIndex + seed;
-
-        int planetCount = levelIndex + 5;
-        lvl.planets = new Planet[planetCount];
-
-        //Build planets
-        for (int i = lvl.planets.Length - 1; i > 0; i--)
-        {
-            Planet pl = new Planet();
-            lvl.planets[i] = pl;
-
-
-            //Create activation configurations
-            List<List<int>> activations = new List<List<int>>();
-            bool breakit = false;
-            while(!breakit)
-            {
-                //Find random configuration for activation (partition)
-                int activSize = Random.Range(1, i + 1);
-                List<int> singleActiv = new List<int>();
-
-                for(int k=0;k<activSize;k++)
-                {
-                    int tryPlanet = Random.Range(0, i);
-                    while (singleActiv.Contains(tryPlanet))
-                        tryPlanet++;
-
-                    singleActiv.Add(tryPlanet);
-                }
-
-                //Check if found configuration contains or is contained in some of the current (makes it redundant) , and break in case
-                bool redudant = false;
-                for(int k=0;k<activations.Count;k++)
-                {
-                    List<int> bigOne;
-                    List<int> smallOne;
-                    if(singleActiv.Count > activations[k].Count)
-                    {
-                        //Check if contains
-                        bigOne = singleActiv;
-                        smallOne = activations[k];
-                    }
-                    else
-                    {
-                        //Check if contained
-                        bigOne = activations[k];
-                        smallOne = singleActiv;
-                    }
-
-                    redudant = true;
-                    for(int l=0;l<smallOne.Count;l++)
-                    {
-                        if(!bigOne.Contains(smallOne[l]))
-                        {
-                            redudant = false;
-                            break;
-                        }
-                    }
-
-                    if (redudant)
-                        break;
-                }
-
-                //Add configuration to activations list or stop
-                if (redudant)
-                    breakit = true;
-                else
-                    activations.Add(singleActiv);
-            }
-
-
-            //Push activation configurations to Planet
-            List<int[]> mm = new List<int[]>();
-            for (int k = 0; k < activations.Count; k++)
-                mm.Add(activations[k].ToArray());
-
-            pl.activations = mm.ToArray();
-        }
-
-        //First planet case
-        lvl.planets[0] = new Planet();
-
-        currentLevel = lvl;
-
-        BuildLevelMapPanel();
+        currentUniverse = new Universe();
+        currentUniverse.Initialize(seed);
     }
 
-    public void BuildLevelMapPanel()
+    public void GoToPreviousLevel()
     {
-        //Level data must have been created already
-        Sprite iconImgPng = Resources.Load<Sprite>("PlanetIcon");
-        float panelWidth = 1000;
-        float panelHeight = 380;
-        float panelxx = 12;
-        float panelyy = -458;
+        DestroyCurrentLevelUI();
 
-        for(int i=0;i<currentLevel.planets.Length;i++)
-        {
-            //Create gameobject
-            GameObject planetIcon = new GameObject("Planet " + i);
-            planetIcon.transform.SetParent(LevelMapPanel.transform);
+        levelIndex--;
 
-            //Configure Rect Transform settings
-            planetIcon.AddComponent<RectTransform>();
-            RectTransform transf = planetIcon.GetComponent<RectTransform>();
-
-            transf.anchorMin = Vector2.up;
-            transf.anchorMax = Vector2.up;
-
-            transf.pivot = Vector2.one * 0.5f;
-            transf.sizeDelta = Vector2.one * 14;
-
-
-            //Add Image component
-            Image iconImg = planetIcon.AddComponent<Image>();
-            iconImg.sprite = iconImgPng;
-
-            //Add icon component
-            Button iconBut = planetIcon.AddComponent<Button>();
-            iconBut.targetGraphic = iconImg;
-            int kk = i;
-            iconBut.onClick.AddListener(() => { SelectPlanet(kk); });
-
-            //Compute Position
-            Vector2 position = new Vector2();
-            position.x = i * panelWidth / (currentLevel.planets.Length - 1);
-            position.y = Random.value * panelHeight;
-
-            transf.anchoredPosition3D = new Vector3(panelxx + position.x, panelyy + position.y, 0);
-        }
-
-        Debug.Log("Potato");
+        CreateCurrentLevelUI();
     }
-
-    public void DestroyCurrentLevel()
+    public void GoToNextLevel()
     {
-
-    }
-
-    public void CompleteCurrentLevel()
-    {
-        DestroyCurrentLevel();
+        DestroyCurrentLevelUI();
 
         levelIndex++;
 
-        CreateCurrentLevel();
+        CreateCurrentLevelUI();
     }
 
-    public void ResetUI()
+    public void CreateCurrentLevelUI()
     {
-
+        BuildHeaderPanel();
+        BuildLevelMapPanel();
+        BuildActivationPanel();
     }
+    public void DestroyCurrentLevelUI()
+    {
+        foreach (Transform t in HeaderPanelScript.transform)
+            GameObject.Destroy(t.gameObject);
+        Object.Destroy(HeaderPanelScript);
+
+        foreach (Transform t in LevelMapPanelScript.transform)
+            GameObject.Destroy(t.gameObject);
+        Object.Destroy(LevelMapPanelScript);
+
+        foreach (Transform t in ActivationPanelScript.transform)
+            GameObject.Destroy(t.gameObject);
+        Object.Destroy(ActivationPanelScript);
+    }
+
+    public void BuildHeaderPanel()
+    {
+        HeaderPanelScript = HeaderPanel.AddComponent<HeaderPanelScript>();
+        HeaderPanelScript.BuildCurrentLevelUI();
+    }
+    public void BuildLevelMapPanel()
+    {
+        //Level data must have been created already
+        LevelMapPanelScript = LevelMapPanel.AddComponent<LevelMapPanelScript>();
+        LevelMapPanelScript.BuildCurrentLevelUI(currentLevel);
+    }
+    public void BuildActivationPanel()
+    {
+        ActivationPanelScript = ActivationPanel.AddComponent<ActivationPanelScript>();
+    }
+
 
     public void SelectPlanet(int index)
     {
-        selectedPlanet = index;
+        DestroySelectionUI();
+
+        selectedPlanetIndex = index;
+
+        CreateSelectionUI();
+    }
+    public void DestroySelectionUI()
+    {
+        ActivationPanelScript.DestroySelectionUI();
+    }
+    public void CreateSelectionUI()
+    {
+        LevelMapPanelScript.CreateSelectionUI();
+        ActivationPanelScript.CreateSelectionUI();
     }
 
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-    public class GameData
+    public void ToggleActivatePlanet(int index)
     {
-
+        currentLevel.planets[index].ToggleActive();
+        UpdateUI();
     }
 
-    public class Level
+    public void UpdateUI()
     {
-        public int index;
-        public int seed;
-
-        public Planet[] planets;
-    }
-
-    public class Planet
-    {
-        public int[][] activations;
+        LevelMapPanelScript.UpdateUI();
+        HeaderPanelScript.UpdateUI();
     }
 }
