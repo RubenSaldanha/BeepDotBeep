@@ -41,7 +41,7 @@ public class Planet {
             //Create activation configurations
             List<List<int>> tempActivations = new List<List<int>>();
             bool breakit = false;
-            while (!breakit)
+            while (!(breakit || tempActivations.Count == 7))
             {
                 //Build random configuration for activation (partition)
                 List<int> singleActiv = new List<int>();
@@ -51,7 +51,7 @@ public class Planet {
                 if (index == 1)
                     activSize = 1;
                 else
-                    activSize = rdm.Next(1, index);
+                    activSize = rdm.Next(1, Mathf.Min(index,16));
 
                 //Populate Partition with non repeating planets
                 for (int k = 0; k < activSize; k++)

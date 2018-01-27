@@ -17,6 +17,11 @@ public static class ResDb {
     public static Sprite PlanetIconPngActive;
     public static Sprite PlanetIconPngAttention;
     public static Sprite PlanetIconPngSelection;
+    public static Sprite PingPng;
+
+    // Connections
+    public static Sprite ConnectionPng;
+    public static Material ConnectionMaterial;
 
     // --- Activation Panel Resources ---
     // Activation Button
@@ -52,8 +57,12 @@ public static class ResDb {
         PlanetIconPngDisconnected = Resources.Load<Sprite>("PlanetIconPngDisconnected");
         PlanetIconPngActive = Resources.Load<Sprite>("PlanetIconPngActive");
         PlanetIconPngAttention = Resources.Load<Sprite>("PlanetIconPngAttention");
+        PingPng = Resources.Load<Sprite>("PingPng");
         //PlanetIconPngSelection = Resources.Load<Sprite>("PlanetIconPngSelection");
 
+        // Connection
+        ConnectionPng = Resources.Load<Sprite>("ConnectionPng");
+        ConnectionMaterial = Resources.Load<Material>("ConnectionMaterial");
 
         // --- Activation Panel Resources ---
         // Activation Button

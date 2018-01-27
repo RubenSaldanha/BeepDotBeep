@@ -56,7 +56,8 @@ public class ActivationPatternScript : MonoBehaviour {
             transf.anchoredPosition3D = new Vector3(0, 0, 0);
             Text labelText = label.AddComponent<Text>();
             labelText.text = "" + target;
-            labelText.font = ResDb.DS_DIGI;
+            labelText.font = ResDb.DS_DIGIB;
+            labelText.fontSize = 22;
             labelText.alignment = TextAnchor.MiddleCenter;
             labelText.color = Color.black;
             transf.sizeDelta = new Vector2(boxWidth, boxHeight);
