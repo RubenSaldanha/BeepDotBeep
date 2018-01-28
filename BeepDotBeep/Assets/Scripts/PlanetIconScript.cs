@@ -14,7 +14,8 @@ public class PlanetIconScript : MonoBehaviour {
 
     List<ConnectionScript> connections;
 
-
+    GameObject selection;
+    GameObject selectionRotator;
 
     static float pingPeriod = 5f;
     float pingAcumulator = 0;
@@ -55,7 +56,7 @@ public class PlanetIconScript : MonoBehaviour {
         //Compute Position
         Vector2 position = new Vector2();
         position.x = planet.index * (parentRect.sizeDelta.x - planetXmargin * 2) / (level.planets.Length - 1) + planetXmargin;
-        position.y = Random.value * (parentRect.sizeDelta.y - planetYmargin * 2) + planetYmargin;
+        position.y = planet.verticalPlacement * (parentRect.sizeDelta.y - planetYmargin * 2) + planetYmargin;
 
         transf.anchoredPosition3D = new Vector3(position.x, position.y, 0);
 
@@ -162,9 +163,57 @@ public class PlanetIconScript : MonoBehaviour {
 
         lastClick = Time.time;
     }
-    public void SetSelected()
+    public void CreateSelectionUI()
     {
-        //iconImg.sprite = ResDb.PlanetIconPngActive;
+        // --- Build static selector ---
+        selection = new GameObject("Selector");
+        RectTransform transf = selection.AddComponent<RectTransform>();
+        selection.transform.SetParent(transform);
+        selection.transform.SetAsFirstSibling();
+
+        transf.anchorMin = Vector2.zero;
+        transf.anchorMax = Vector2.one;
+
+        transf.pivot = Vector2.one * 0.5f;
+        transf.sizeDelta = Vector2.one * iconSize* 1.5f;
+
+        //Compute Position
+        Vector2 position = new Vector2();
+        position.x = 0;
+        position.y = 0;
+
+        transf.anchoredPosition3D = new Vector3(position.x, position.y, 0);
+
+        Image selImg = selection.AddComponent<Image>();
+        selImg.sprite = ResDb.PlanetIconSelectionPng;
+
+
+        // --- Build Rotator ---
+        selectionRotator = new GameObject("Selector Rotator");
+        transf = selectionRotator.AddComponent<RectTransform>();
+        selectionRotator.transform.SetParent(transform);
+        selectionRotator.transform.SetAsFirstSibling();
+
+        transf.anchorMin = Vector2.zero;
+        transf.anchorMax = Vector2.one;
+
+        transf.pivot = Vector2.one * 0.5f;
+        transf.sizeDelta = Vector2.one * iconSize * 2f;
+
+        //Compute Position
+        position = new Vector2();
+        position.x = 0;
+        position.y = 0;
+
+        transf.anchoredPosition3D = new Vector3(position.x, position.y, 0);
+
+        selImg = selectionRotator.AddComponent<Image>();
+        selImg.sprite = ResDb.PlanetIconSelectionPngRotator;
+    }
+    public void DestroySelectionUI()
+    {
+        GameObject.Destroy(selection);
+        GameObject.Destroy(selectionRotator);
     }
     public void UpdateUI()
     {
@@ -211,6 +260,10 @@ public class PlanetIconScript : MonoBehaviour {
                 }
             }
         }
+
+        float rotatorPeriod = 6f;
+        if (selectionRotator != null)
+            selectionRotator.transform.localRotation = Quaternion.AngleAxis(Time.time * 360 / rotatorPeriod, Vector3.forward);
     }
 
     void SpawnPing()

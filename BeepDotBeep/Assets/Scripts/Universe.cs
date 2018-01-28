@@ -12,7 +12,7 @@ public class Universe{
     {
         this.seed = seed;
 
-        int levelCount = 12;
+        int levelCount = 24;
 
         System.Random rdm = new System.Random(seed);
 

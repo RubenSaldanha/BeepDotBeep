@@ -4,6 +4,9 @@ using UnityEngine;
 
 public static class ResDb {
 
+    // --- Generic Panel Resources ---
+    public static Sprite PanelBackgroundPng;
+
     // --- Header Panel Resources ---
     // Header Panel
     public static Sprite NextLevelButtonPngActive;
@@ -16,8 +19,10 @@ public static class ResDb {
     public static Sprite PlanetIconPngDisconnected;
     public static Sprite PlanetIconPngActive;
     public static Sprite PlanetIconPngAttention;
-    public static Sprite PlanetIconPngSelection;
+    public static Sprite PlanetIconSelectionPng;
+    public static Sprite PlanetIconSelectionPngRotator;
     public static Sprite PingPng;
+    public static Sprite[] StarsPng;
 
     // Connections
     public static Sprite ConnectionPng;
@@ -43,6 +48,9 @@ public static class ResDb {
 
     public static void Load()
     {
+        // --- Generic Panel Resources ---
+        PanelBackgroundPng = Resources.Load<Sprite>("PanelPng");
+
         // --- Header Panel Resources ---
         // Next Level Button
         NextLevelButtonPngInactive = Resources.Load<Sprite>("NextLevelButtonPngInactive");
@@ -58,7 +66,13 @@ public static class ResDb {
         PlanetIconPngActive = Resources.Load<Sprite>("PlanetIconPngActive");
         PlanetIconPngAttention = Resources.Load<Sprite>("PlanetIconPngAttention");
         PingPng = Resources.Load<Sprite>("PingPng");
-        //PlanetIconPngSelection = Resources.Load<Sprite>("PlanetIconPngSelection");
+        PlanetIconSelectionPng = Resources.Load<Sprite>("PlanetIconSelectionPng");
+        PlanetIconSelectionPngRotator = Resources.Load<Sprite>("PlanetIconSelectionPngRotator");
+
+        StarsPng = new Sprite[3];
+        StarsPng[0] = Resources.Load<Sprite>("StarTriPng");
+        StarsPng[1] = Resources.Load<Sprite>("StarCrossPng");
+        StarsPng[2] = Resources.Load<Sprite>("StarPentaPng");
 
         // Connection
         ConnectionPng = Resources.Load<Sprite>("ConnectionPng");

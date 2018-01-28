@@ -22,7 +22,9 @@ public class HeaderPanelScript : MonoBehaviour {
             BuildPreviousLevelButton();
 
         BuildActivationPointsLabel();
-        BuildNextLevelButton();
+
+        if(GameControllerScript.current.levelIndex != GameControllerScript.current.currentUniverse.levels.Length - 1)
+            BuildNextLevelButton();
     }
 
     public void BuildPreviousLevelButton()
@@ -53,14 +55,14 @@ public class HeaderPanelScript : MonoBehaviour {
         transf.pivot = new Vector2(0, 0);
 
         Text labelText = ActivationPointsLabel.AddComponent<Text>();
-        labelText.text = "Activation Points : " + GameControllerScript.current.currentUniverse.ComputeActivationPoints(GameControllerScript.current.levelIndex);
-        labelText.font = ResDb.DS_DIGI;
+        labelText.text = "Energy : " + GameControllerScript.current.currentUniverse.ComputeActivationPoints(GameControllerScript.current.levelIndex);
+        labelText.font = ResDb.DS_DIGIB;
         labelText.color = Color.white;
-        labelText.fontSize = 24;
+        labelText.fontSize = 34;
         labelText.alignment = TextAnchor.MiddleCenter;
 
-        transf.sizeDelta = new Vector2(300, 68);
-        transf.anchoredPosition3D = new Vector3(340, 0, 0);
+        transf.sizeDelta = new Vector2(424, 68);
+        transf.anchoredPosition3D = new Vector3(300, 0, 0);
     }
     public void BuildNextLevelButton()
     {
@@ -83,10 +85,12 @@ public class HeaderPanelScript : MonoBehaviour {
     public void UpdateUI()
     {
         UpdateActivationPointsLabel();
-        _NextLevelButtonScript.UpdateUI();
+
+        if(_NextLevelButtonScript != null)
+            _NextLevelButtonScript.UpdateUI();
     }
     public void UpdateActivationPointsLabel()
     {
-        ActivationPointsLabel.GetComponent<Text>().text = "Activation Points : " + GameControllerScript.current.currentUniverse.ComputeActivationPoints(GameControllerScript.current.levelIndex);
+        ActivationPointsLabel.GetComponent<Text>().text = "Energy : " + GameControllerScript.current.currentUniverse.ComputeActivationPoints(GameControllerScript.current.levelIndex);
     }
 }

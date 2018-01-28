@@ -52,7 +52,36 @@ public class ActivationPanelScript : MonoBehaviour {
 
         transf.anchoredPosition3D = new Vector3(position.x, position.y, 0);
 
-        float zonewidth = 300;
+
+        //Create Activation Text
+        float textHeight = 40;
+        GameObject activationText = new GameObject("Activation Text");
+        activationText.transform.SetParent(transform);
+
+        //Configure Rect Transform settings
+        activationText.AddComponent<RectTransform>();
+        transf = activationText.GetComponent<RectTransform>();
+
+        transf.anchorMin = Vector2.zero;
+        transf.anchorMax = Vector2.zero;
+
+        transf.pivot = new Vector2(0, 0);
+        transf.sizeDelta = new Vector2(400, textHeight);
+
+        //Add Image component
+        Text tt = activationText.AddComponent<Text>();
+        tt.text = "Activation Pattern Requirements";
+        tt.font = ResDb.DS_DIGI;
+        tt.fontSize = 24;
+
+        //Compute Position
+        position = new Vector2();
+        position.x = margin;
+        position.y = parentRect.sizeDelta.y - textHeight - margin;
+
+        transf.anchoredPosition3D = new Vector3(position.x, position.y, 0);
+
+
         //Create Activation Patterns
         if (selectedPlanet.activations != null) // first planet case
         {
@@ -69,12 +98,13 @@ public class ActivationPanelScript : MonoBehaviour {
                 transf.pivot = Vector2.zero;
                 transf.sizeDelta = Vector2.one * 20;
 
-                transf.anchoredPosition3D = new Vector3(0 + margin, parentRect.sizeDelta.y - (i + 1) * (boxHeight + boxMNarginY) - margin, 0);
+                transf.anchoredPosition3D = new Vector3(0 + margin, parentRect.sizeDelta.y - (i + 1) * (boxHeight + boxMNarginY) - margin - 25, 0);
 
                 ActivationPatternScript patternScript = pattern.AddComponent<ActivationPatternScript>();
                 patternScript.Initialize(i, selectedPlanet, this);
             }
         }
+
     }
     public void DestroySelectionUI()
     {

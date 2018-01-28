@@ -59,6 +59,7 @@ public class GameControllerScript : MonoBehaviour {
     {
         DestroyCurrentLevelUI();
 
+        selectedPlanetIndex = 0;
         levelIndex--;
 
         CreateCurrentLevelUI();
@@ -67,6 +68,7 @@ public class GameControllerScript : MonoBehaviour {
     {
         DestroyCurrentLevelUI();
 
+        selectedPlanetIndex = 0;
         levelIndex++;
 
         CreateCurrentLevelUI();
@@ -120,6 +122,7 @@ public class GameControllerScript : MonoBehaviour {
     }
     public void DestroySelectionUI()
     {
+        LevelMapPanelScript.DestroySelectionUI();
         ActivationPanelScript.DestroySelectionUI();
     }
     public void CreateSelectionUI()
@@ -138,5 +141,20 @@ public class GameControllerScript : MonoBehaviour {
     {
         LevelMapPanelScript.UpdateUI();
         HeaderPanelScript.UpdateUI();
+
+        Planet lastPlanet = currentUniverse.levels[currentUniverse.levels.Length - 1].LastPlanet;
+        if (lastPlanet.active && lastPlanet.connected && !gameOverTriggered)
+        {
+            gameOverTriggered = true;
+            GameOver();
+        }
+    }
+
+    bool gameOverTriggered = false;
+    void GameOver()
+    {
+        GameObject canvas = GameObject.Find("MainCanvas");
+        GameObject gOver = canvas.transform.Find("GameOver").gameObject;
+        gOver.SetActive(true);
     }
 }

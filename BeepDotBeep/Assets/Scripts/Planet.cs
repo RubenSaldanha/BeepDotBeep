@@ -16,8 +16,11 @@ public class Planet {
     public bool active;
     public bool connected;
 
+    public float verticalPlacement;
+
     public List<List<int>> minimalRequiredActivationsOptions;
     //public List<float> activationDifficulties;
+
 
     public void Initialize(int index, Level level, int seed)
     {
@@ -26,6 +29,8 @@ public class Planet {
         this.seed = seed;
 
         System.Random rdm = new System.Random(seed);
+
+        verticalPlacement = (float)rdm.NextDouble();
 
         if (index == 0 && level.index == 0)
         {
