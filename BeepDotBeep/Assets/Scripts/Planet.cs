@@ -16,6 +16,9 @@ public class Planet {
     public bool active;
     public bool connected;
 
+    public List<List<int>> minimalRequiredActivationsOptions;
+    //public List<float> activationDifficulties;
+
     public void Initialize(int index, Level level, int seed)
     {
         this.index = index;
@@ -139,12 +142,10 @@ public class Planet {
         if (index == 0)
             return;
 
-        if (universe.ComputeActivationPoints(level.index) <= 0)
-            return;
-
         if(!active)
         {
-            active = true;
+            if (universe.ComputeActivationPoints(level.index) > 0)
+                active = true;
         }
         else
         {

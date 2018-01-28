@@ -20,11 +20,20 @@ public class PlanetIconScript : MonoBehaviour {
     float pingAcumulator = 0;
     float lastClick = 0;
 
+    public int[] activOption1;
+    public int[] activOption2;
+    public int[] activOption3;
 
     public void Initialize(Planet planet, Level level, LevelMapPanelScript LevelMapPanel)
     {
         this.LevelMapPanelScript = LevelMapPanel;
         this.planet = planet;
+        if(planet.minimalRequiredActivationsOptions.Count > 0)
+            activOption1 = planet.minimalRequiredActivationsOptions[0].ToArray();
+        if(planet.minimalRequiredActivationsOptions.Count > 1)
+            activOption2 = planet.minimalRequiredActivationsOptions[1].ToArray();
+        if (planet.minimalRequiredActivationsOptions.Count > 2)
+            activOption3 = planet.minimalRequiredActivationsOptions[2].ToArray();
 
         float planetXmargin = 20;
         float planetYmargin = 40;
@@ -105,7 +114,9 @@ public class PlanetIconScript : MonoBehaviour {
                     PlanetIconScript origin = LevelMapPanelScript.planetIcons[planet.activations[i][j]];
 
                     Vector2 diff = origin.transform.localPosition - transform.localPosition;
-                    float angle = Vector2.SignedAngle(Vector2.right, diff);
+#warning REVERT COMMENT
+                    float angle = Vector2.Angle(Vector2.right, diff) * Mathf.Sign(diff.y);
+                    //float angle = Vector2.SignedAngle(Vector2.right, diff);
 
                     GameObject connectionObj = new GameObject("Connection " + planet.index + " :: " + origin.planet.index);
                     transf = connectionObj.AddComponent<RectTransform>();

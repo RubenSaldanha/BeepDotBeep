@@ -12,7 +12,7 @@ public class Universe{
     {
         this.seed = seed;
 
-        int levelCount = 32;
+        int levelCount = 12;
 
         System.Random rdm = new System.Random(seed);
 
@@ -22,6 +22,25 @@ public class Universe{
             levels[i] = new Level();
             levels[i].Initialize(i, this, rdm.Next());
         }
+
+        int initialMargin = 5;
+        int removedMargin = 0;
+        for(int i=0;i<levels.Length;i++)
+        {
+            int removal = 0;
+            if (removedMargin > 1)
+            {
+                if (rdm.Next() > (initialMargin - 1f) / levels.Length)
+                    removal = 1;
+            }
+            else if (i == levels.Length - 1)
+                removal = initialMargin - removedMargin; // Last level put margin to 0
+
+
+            levels[i].bonusActivationPoints = levels[i].requiredPoints - removal;
+            removedMargin += removal;
+        }
+        levels[0].bonusActivationPoints += initialMargin;
 
         Update();
     }
