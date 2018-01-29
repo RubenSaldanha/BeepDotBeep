@@ -16,6 +16,8 @@ public class Planet {
     public bool active;
     public bool connected;
 
+    public List<int> connectedPatterns;
+
     public float verticalPlacement;
 
     public List<List<int>> minimalRequiredActivationsOptions;
@@ -27,6 +29,8 @@ public class Planet {
         this.index = index;
         this.level = level;
         this.seed = seed;
+
+        connectedPatterns = new List<int>();
 
         System.Random rdm = new System.Random(seed);
 
@@ -49,7 +53,7 @@ public class Planet {
             //Create activation configurations
             List<List<int>> tempActivations = new List<List<int>>();
             bool breakit = false;
-            while (!(breakit || tempActivations.Count == 7))
+            while (!(breakit || tempActivations.Count == 8))
             {
                 //Build random configuration for activation (partition)
                 List<int> singleActiv = new List<int>();
@@ -59,12 +63,21 @@ public class Planet {
                 if (index == 1)
                     activSize = 1;
                 else
-                    activSize = rdm.Next(1, Mathf.Min(index,16));
+                {
+                    int lowerBound = 1;
+                    int upperBound = Mathf.Min(index, 16);
+                    float factor = (float)rdm.NextDouble();
+                    factor = Mathf.Pow(factor,4); //tilt randomness towards lower values
+                    activSize = lowerBound + (int)(factor * (upperBound - lowerBound));
+                }
 
                 //Populate Partition with non repeating planets
                 for (int k = 0; k < activSize; k++)
                 {
-                    int tryPlanet = rdm.Next(0, index);
+                    float factor = (float)rdm.NextDouble();
+                    factor = Mathf.Pow(factor, 1f/4f); //push random factor upwards
+                    int tryPlanet = (int)(factor * index);
+                    tryPlanet = tryPlanet % index; //Fix possible overflow on index
                     while (singleActiv.Contains(tryPlanet))
                         tryPlanet = (tryPlanet + 1) % index; //Cycle search next
 
@@ -165,6 +178,8 @@ public class Planet {
         if (activations == null)
             return;
 
+
+        connectedPatterns.Clear();
         for(int i=0;i<activations.Length;i++)
         {
             connected = true;
@@ -179,7 +194,10 @@ public class Planet {
             }
 
             if (connected)
-                break;
+                connectedPatterns.Add(i);
         }
+
+        if (connectedPatterns.Count > 0)
+            connected = true;
     }
 }

@@ -41,7 +41,9 @@ public class GameControllerScript : MonoBehaviour {
         PlanetPanel = GameObject.Find("PlanetPanel");
         ActivationPanel = GameObject.Find("ActivationPanel");
 
-        seed = 0;
+        System.Random rdm = new System.Random();
+#warning DEBUG Fixed Universe Seed
+        seed = 0; // rdm.Next();
         levelIndex = 0;
 
         CreateCurrentUniverse();

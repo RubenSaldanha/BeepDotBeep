@@ -115,11 +115,10 @@ public class PlanetIconScript : MonoBehaviour {
                     PlanetIconScript origin = LevelMapPanelScript.planetIcons[planet.activations[i][j]];
 
                     Vector2 diff = origin.transform.localPosition - transform.localPosition;
-#warning REVERT COMMENT
-                    float angle = Vector2.Angle(Vector2.right, diff) * Mathf.Sign(diff.y);
                     //float angle = Vector2.SignedAngle(Vector2.right, diff);
+                    float angle = Vector2.Angle(Vector2.right, diff) * Mathf.Sign(diff.y); //Signed alternative
 
-                    GameObject connectionObj = new GameObject("Connection " + planet.index + " :: " + origin.planet.index);
+                    GameObject connectionObj = new GameObject("Connection " + origin.planet.index + " :: " + planet.index);
                     transf = connectionObj.AddComponent<RectTransform>();
                     transf.SetParent(transform);
 
